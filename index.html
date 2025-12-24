@@ -5,9 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube API Config Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body {
-            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.15);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .animate-slide-up {
+            animation: slideUp 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
         }
         .line-clamp-2 {
             display: -webkit-box;
@@ -23,97 +87,136 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+<body class="bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')] bg-cover bg-center bg-fixed min-h-screen relative">
+    <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/90 via-purple-900/90 to-slate-900/90 backdrop-blur-sm z-0"></div>
+    <div class="relative z-10 min-h-screen">
     <!-- Login Section -->
-    <div id="loginSection" class="min-h-screen flex items-center justify-center px-4">
-        <div class="max-w-md w-full">
-            <div class="bg-white rounded-2xl shadow-2xl p-8">
-                <div class="text-center mb-8">
-                    <div class="mx-auto w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center mb-4">
-                        <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+    <!-- Login Section -->
+    <div id="loginSection" class="min-h-screen flex items-center justify-center px-4 py-12">
+        <div class="max-w-md w-full animate-slide-up">
+            <div class="glass-panel rounded-3xl p-8 md:p-10 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 via-pink-500 to-purple-500"></div>
+                
+                <div class="text-center mb-10">
+                    <div class="mx-auto w-20 h-20 bg-gradient-to-tr from-red-500 to-pink-600 rounded-3xl rotate-3 flex items-center justify-center mb-6 shadow-xl shadow-red-500/20 group hover:rotate-6 transition-all duration-300">
+                        <svg class="w-10 h-10 text-white group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                         </svg>
                     </div>
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">YouTube Dashboard</h1>
-                    <p class="text-gray-600">เข้าสู่ระบบด้วย Gmail ของคุณ</p>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2 tracking-tight">YouTube Insight</h1>
+                    <p class="text-gray-500 font-medium">เข้าสู่ระบบเพื่อจัดการข้อมูลของคุณ</p>
                 </div>
                 
                 <form id="loginForm" class="space-y-6">
                     <div>
-                        <label for="gmailInput" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="gmailInput" class="block text-sm font-semibold text-gray-700 mb-2 ml-1">
                             Gmail Address
                         </label>
-                        <div class="relative">
+                        <div class="relative group">
                             <input type="email" id="gmailInput" required 
                                    placeholder="example@gmail.com"
-                                   class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-200">
-                            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                   class="w-full px-5 py-4 pl-12 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:bg-white transition-all duration-200 outline-none text-gray-800 placeholder-gray-400">
+                            <svg class="w-5 h-5 text-gray-400 absolute left-4 top-4.5 group-focus-within:text-red-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
                             </svg>
                         </div>
                     </div>
 
                     <button type="submit" id="loginButton"
-                            class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-105 shadow-lg">
-                        เข้าสู่ระบบ
+                            class="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white font-bold py-4 px-6 rounded-2xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-red-500/30 flex items-center justify-center space-x-2">
+                        <span>เข้าสู่ระบบ</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
                     </button>
                 </form>
 
-                <div id="loginStatus" class="mt-4 hidden"></div>
+                <div id="loginStatus" class="mt-6 hidden"></div>
             </div>
+            
+            <p class="text-center text-white/40 text-sm mt-8">
+                &copy; 2024 YouTube Data Manager. All rights reserved.
+            </p>
         </div>
     </div>
 
     <!-- Main Dashboard Section -->
-    <div id="mainSection" class="hidden">
-        <div class="container mx-auto px-4 py-8">
-            <div class="max-w-6xl mx-auto">
-                <!-- Header with Logout -->
-                <div class="bg-white rounded-lg shadow-lg p-4 mb-8">
-                    <div class="flex justify-between items-center">
-                        <div class="flex space-x-4">
-                            <button id="configTab" class="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium">
-                                จัดการ Config
-                            </button>
-                            <button id="dashboardTab" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300">
-                                แดชบอร์ด YouTube
-                            </button>
+    <div id="mainSection" class="hidden min-h-screen pb-12">
+        <!-- Navigation Bar -->
+        <nav class="sticky top-0 z-50 glass-panel border-b border-white/20 mb-8 rounded-b-3xl">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-red-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                            </svg>
                         </div>
-                        <div class="flex items-center space-x-4">
-                            <span id="userEmail" class="text-sm text-gray-600"></span>
-                            <button id="logoutButton" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition duration-200">
-                                ออกจากระบบ
-                            </button>
+                        <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600">YouTube Manager</span>
+                    </div>
+
+                    <div class="flex bg-gray-100/50 p-1 rounded-xl backdrop-blur-sm border border-white/50">
+                        <button id="configTab" class="px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 shadow-sm bg-white text-indigo-600">
+                            จัดการ Config
+                        </button>
+                        <button id="dashboardTab" class="px-6 py-2.5 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-700 hover:bg-white/50 transition-all duration-300">
+                            แดชบอร์ด
+                        </button>
+                        <button id="reportTab" class="px-6 py-2.5 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-700 hover:bg-white/50 transition-all duration-300">
+                            รายงาน
+                        </button>
+                    </div>
+
+                    <div class="flex items-center space-x-4">
+                        <div class="hidden md:flex flex-col items-end">
+                            <span id="userEmail" class="text-sm font-medium text-gray-800"></span>
+                            <span class="text-xs text-gray-500">Administrator</span>
                         </div>
+                        <button id="logoutButton" class="p-2.5 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 rounded-xl transition-all duration-200 border border-red-100">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
+            </div>
+        </nav>
 
-                <!-- Title -->
-                <div class="text-center mb-8">
-                    <h1 id="pageTitle" class="text-4xl font-bold text-gray-800 mb-2">YouTube API Config Manager</h1>
-                    <p id="pageSubtitle" class="text-gray-600">จัดการการตั้งค่า YouTube API แบบ Real-time</p>
+        <div class="container mx-auto px-4">
+            <div class="max-w-7xl mx-auto">
+                <!-- Title Section -->
+                <div class="text-center mb-12 animate-fade-in">
+                    <h1 id="pageTitle" class="text-4xl md:text-5xl font-bold text-white mb-3 drop-shadow-md">YouTube API Config Manager</h1>
+                    <p id="pageSubtitle" class="text-indigo-100 text-lg">จัดการการตั้งค่า YouTube API แบบ Real-time</p>
                 </div>
 
                 <!-- Config Management Section -->
-                <div id="configSection">
+                <div id="configSection" class="animate-fade-in">
                     <!-- Add Config Form -->
-                    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-                        <h2 class="text-2xl font-semibold text-gray-800 mb-6">เพิ่ม Config ใหม่</h2>
-                        <form id="configForm" class="space-y-4">
-                            <div>
-                                <label for="channelName" class="block text-sm font-medium text-gray-700 mb-2">ชื่อช่อง</label>
-                                <input type="text" id="channelName" required 
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            </div>
-                            <div>
-                                <label for="apiKey" class="block text-sm font-medium text-gray-700 mb-2">API Key</label>
-                                <input type="text" id="apiKey" required 
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            </div>
-                            <div>
-                                <label for="channelId" class="block text-sm font-medium text-gray-700 mb-2">Channel ID</label>
-                                <input type="text" id="channelId" required 
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <div class="glass-panel rounded-3xl p-8 mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <span class="bg-indigo-100 text-indigo-600 p-2 rounded-lg mr-3">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                            </span>
+                            เพิ่ม Config ใหม่
+                        </h2>
+                        <form id="configForm" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <label for="channelName" class="block text-sm font-semibold text-gray-700 mb-2">ชื่อช่อง</label>
+                                    <input type="text" id="channelName" required placeholder="เช่น My Awesome Channel"
+                                           class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition-all outline-none">
+                                </div>
+                                <div>
+                                    <label for="apiKey" class="block text-sm font-semibold text-gray-700 mb-2">API Key</label>
+                                    <input type="text" id="apiKey" required placeholder="AIza..."
+                                           class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition-all outline-none">
+                                </div>
+                                <div>
+                                    <label for="channelId" class="block text-sm font-semibold text-gray-700 mb-2">Channel ID</label>
+                                    <input type="text" id="channelId" required placeholder="UC..."
+                                           class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition-all outline-none">
+                                </div>
                             </div>
                             <button type="submit" 
                                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200">
@@ -134,18 +237,77 @@
                     </div>
                 </div>
 
+                <!-- Report Section (New) -->
+                <div id="reportSection" class="hidden animate-fade-in">
+                    <div class="glass-panel rounded-3xl p-8 mb-8 max-w-2xl mx-auto text-center">
+                        <div class="mb-8 flex justify-center">
+                            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center shadow-inner">
+                                <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            </div>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">สร้างรายงาน Excel</h2>
+                        <p class="text-gray-600 mb-8 text-lg">ดาวน์โหลดสรุปข้อมูลสถิติช่อง YouTube ของคุณในรูปแบบไฟล์ Excel เพื่อนำไปวิเคราะห์ต่อได้อย่างง่ายดาย</p>
+                        
+                        <div class="bg-gray-50 rounded-2xl p-6 mb-8 text-left border border-gray-100 shadow-sm">
+                            <h3 class="font-semibold text-gray-700 mb-4 border-b border-gray-200 pb-2">กำหนดข้อมูลรายงาน:</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">1. เลือกช่อง YouTube</label>
+                                    <select id="reportChannelSelector" class="w-full px-4 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none">
+                                        <option value="">เลือกช่อง...</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">2. เลือกปี</label>
+                                    <select id="reportYearSelector" class="w-full px-4 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none" disabled>
+                                        <option value="">รอเลือกช่อง...</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <h3 class="font-semibold text-gray-700 mb-4 border-b border-gray-200 pb-2 mt-6">สิ่งที่จะได้รับในรายงาน:</h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    <span class="text-gray-600"><strong>Dashboard:</strong> ภาพรวมสถิติสำคัญประจำปี</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    <span class="text-gray-600"><strong>Monthly Stats:</strong> สรุปยอดวิวและการอัปโหลดรายเดือน</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    <span class="text-gray-600"><strong>All Videos:</strong> รายละเอียดเจาะลึกทุกคลิปวิดีโอ</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <button id="exportReportPageBtn" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-green-500/30 flex items-center justify-center text-lg">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            ดาวน์โหลดรายงานเดี๋ยวนี้
+                        </button>
+                        <p id="reportStatus" class="mt-4 text-sm text-gray-500 hidden">กรุณาเลือกช่องและปีก่อนดาวน์โหลด</p>
+                    </div>
+                </div>
+
                 <!-- Dashboard Section -->
-                <div id="dashboardSection" class="hidden">
+                <div id="dashboardSection" class="hidden animate-fade-in">
                     <!-- Channel Selector -->
-                    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-                        <h2 class="text-2xl font-semibold text-gray-800 mb-6">เลือกช่อง YouTube</h2>
-                        <div class="flex space-x-4">
-                            <select id="channelSelector" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                <option value="">เลือกช่อง...</option>
+                    <div class="glass-panel rounded-3xl p-8 mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <span class="bg-indigo-100 text-indigo-600 p-2 rounded-lg mr-3">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                            </span>
+                            เลือกช่อง YouTube
+                        </h2>
+                        <div class="flex flex-col">
+                            <select id="channelSelector" class="w-full px-5 py-4 bg-white/50 border border-white/40 rounded-2xl focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all outline-none cursor-pointer text-gray-700 font-medium text-lg appearance-none shadow-sm backdrop-blur-sm hover:bg-white/70">
+                                <option value="">เลือกช่อง YouTube ของคุณ...</option>
                             </select>
-                            <button id="loadChannelData" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200">
-                                โหลดข้อมูล
-                            </button>
+                            <div class="pointer-events-none absolute right-12 top-[108px] flex items-center px-2 text-gray-500">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
                         </div>
                     </div>
 
@@ -157,20 +319,27 @@
                     </div>
 
                     <!-- Year Filter -->
-                    <div id="yearFilterSection" class="bg-white rounded-lg shadow-lg p-6 mb-8 hidden">
-                        <h2 class="text-2xl font-semibold text-gray-800 mb-6">เลือกปี</h2>
-                        <div class="flex space-x-4">
-                            <select id="yearSelector" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                <option value="">เลือกปี...</option>
+                    <div id="yearFilterSection" class="glass-panel rounded-3xl p-8 mb-8 hidden">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <span class="bg-emerald-100 text-emerald-600 p-2 rounded-lg mr-3">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            </span>
+                            เลือกปี
+                        </h2>
+                        <div class="flex flex-col relative">
+                            <select id="yearSelector" class="w-full px-5 py-4 bg-white/50 border border-white/40 rounded-2xl focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 focus:bg-white transition-all outline-none cursor-pointer text-gray-700 font-medium text-lg appearance-none shadow-sm backdrop-blur-sm hover:bg-white/70">
+                                <option value="">เลือกปีที่ต้องการวิเคราะห์...</option>
                             </select>
-                            <button id="loadYearData" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200">
-                                โหลดข้อมูลปี
-                            </button>
+                            <div class="pointer-events-none absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center px-2 text-gray-500">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Analytics Dashboard -->
                     <div id="analyticsSection" class="space-y-8 hidden">
+                        <!-- Removed Inline Export Button -->
+                        <!-- Performance Overview -->
                         <!-- Performance Overview -->
                         <div class="bg-white rounded-lg shadow-lg p-6">
                             <h2 class="text-2xl font-semibold text-gray-800 mb-6">📊 ภาพรวมประสิทธิภาพ</h2>
@@ -296,17 +465,19 @@
         const statusMessage = document.getElementById('statusMessage');
         const configTab = document.getElementById('configTab');
         const dashboardTab = document.getElementById('dashboardTab');
+        const reportTab = document.getElementById('reportTab'); // New Tab
         const configSection = document.getElementById('configSection');
         const dashboardSection = document.getElementById('dashboardSection');
+        const reportSection = document.getElementById('reportSection'); // New Section
         const pageTitle = document.getElementById('pageTitle');
         const pageSubtitle = document.getElementById('pageSubtitle');
         const channelSelector = document.getElementById('channelSelector');
-        const loadChannelDataBtn = document.getElementById('loadChannelData');
-        const channelInfo = document.getElementById('channelInfo');
-        const channelDetails = document.getElementById('channelDetails');
-        const yearFilterSection = document.getElementById('yearFilterSection');
-        const yearSelector = document.getElementById('yearSelector');
-        const loadYearDataBtn = document.getElementById('loadYearData');
+        // Report Page Selectors
+        const reportChannelSelector = document.getElementById('reportChannelSelector');
+        const reportYearSelector = document.getElementById('reportYearSelector');
+        
+        const loadChannelDataBtn = null; // Removed button
+        const loadYearDataBtn = null; // Removed button
         const analyticsSection = document.getElementById('analyticsSection');
         const performanceOverview = document.getElementById('performanceOverview');
         const weekdayChart = document.getElementById('weekdayChart');
@@ -320,13 +491,220 @@
         const monthlyDetailTitle = document.getElementById('monthlyDetailTitle');
         const monthlyVideosList = document.getElementById('monthlyVideosList');
         const backToMonthlyTableBtn = document.getElementById('backToMonthlyTable');
+        const exportExcelBtn = null; 
+        const exportReportPageBtn = document.getElementById('exportReportPageBtn');
+        const reportStatus = document.getElementById('reportStatus');
 
         let allConfigs = {};
-        let currentChannelData = null;
         let currentConfig = null;
+        let currentUser = null;
+        let currentChannelData = null;
         let currentYearVideos = [];
         let currentSelectedYear = null;
-        let currentUser = null;
+        // Global variables for Report Page
+        let currentReportConfig = null;
+        let currentReportVideos = [];
+        let currentReportSelectedYear = null;
+
+        if (exportReportPageBtn) {
+            exportReportPageBtn.addEventListener('click', () => {
+                if (!currentReportVideos || currentReportVideos.length === 0) {
+                    reportStatus.textContent = 'กรุณาเลือกช่องและปีก่อนดาวน์โหลด';
+                    reportStatus.classList.remove('hidden');
+                    reportStatus.classList.add('text-red-500');
+                    return;
+                }
+                reportStatus.classList.add('hidden');
+                exportToExcel(currentReportVideos, currentReportConfig.channelName, currentReportSelectedYear + 543);
+            });
+        }
+
+        // Report Channel Selector Logic
+        if (reportChannelSelector) {
+            reportChannelSelector.addEventListener('change', async () => {
+                const selectedConfigId = reportChannelSelector.value;
+                if (!selectedConfigId) {
+                    reportYearSelector.innerHTML = '<option value="">รอเลือกช่อง...</option>';
+                    reportYearSelector.disabled = true;
+                    return;
+                }
+
+                const config = allConfigs[selectedConfigId];
+                currentReportConfig = config;
+                reportChannelSelector.disabled = true;
+                const originalText = reportChannelSelector.options[reportChannelSelector.selectedIndex].text;
+                reportChannelSelector.options[reportChannelSelector.selectedIndex].text = 'กำลังโหลด...';
+
+                try {
+                    const channelData = await fetchChannelData(config.apiKey, config.channelId);
+                    // Reuse generateYearOptions logic but for report selector
+                    const createdYear = new Date(channelData.snippet.publishedAt).getFullYear();
+                    const currentYear = new Date().getFullYear();
+                    reportYearSelector.innerHTML = '<option value="">เลือกปี...</option>';
+                    for (let year = currentYear; year >= createdYear; year--) {
+                        const option = document.createElement('option');
+                        option.value = year;
+                        option.textContent = year + 543;
+                        reportYearSelector.appendChild(option);
+                    }
+                    reportYearSelector.disabled = false;
+                } catch (error) {
+                    console.error('Report Channel Error:', error);
+                    alert('เกิดข้อผิดพลาดในการโหลดข้อมูลช่อง');
+                } finally {
+                    reportChannelSelector.disabled = false;
+                    reportChannelSelector.options[reportChannelSelector.selectedIndex].text = originalText;
+                }
+            });
+        }
+
+        // Report Year Selector Logic
+        if (reportYearSelector) {
+            reportYearSelector.addEventListener('change', async () => {
+                const selectedYear = parseInt(reportYearSelector.value);
+                if (!selectedYear || !currentReportConfig) return;
+
+                reportYearSelector.disabled = true;
+                const originalText = reportYearSelector.options[reportYearSelector.selectedIndex].text;
+                reportYearSelector.options[reportYearSelector.selectedIndex].text = 'กำลังดึงข้อมูล...';
+                exportReportPageBtn.textContent = 'กำลังเตรียมข้อมูล...';
+                exportReportPageBtn.disabled = true;
+
+                try {
+                    const videos = await fetchChannelVideosForYear(currentReportConfig.apiKey, currentReportConfig.channelId, selectedYear);
+                    currentReportVideos = videos;
+                    currentReportSelectedYear = selectedYear;
+                    
+                    exportReportPageBtn.textContent = `ดาวน์โหลดรายงานปี ${selectedYear + 543} (${videos.length} วิดีโอ)`;
+                    exportReportPageBtn.classList.remove('from-emerald-500', 'to-green-600');
+                    exportReportPageBtn.classList.add('from-blue-500', 'to-indigo-600');
+                    reportStatus.textContent = 'ข้อมูลพร้อมแล้ว! กดปุ่มด้านบนเพื่อดาวน์โหลด';
+                    reportStatus.className = 'mt-4 text-sm text-green-600 font-medium';
+                } catch (error) {
+                    console.error('Report Year Error:', error);
+                    reportStatus.textContent = 'เกิดข้อผิดพลาดในการดึงข้อมูลปี';
+                    reportStatus.className = 'mt-4 text-sm text-red-500';
+                } finally {
+                    reportYearSelector.disabled = false;
+                    reportYearSelector.options[reportYearSelector.selectedIndex].text = originalText;
+                    exportReportPageBtn.disabled = false;
+                }
+            });
+        }
+
+        function exportToExcel(videos, channelName, year) {
+            const wb = XLSX.utils.book_new();
+            
+            // 1. Sheet: Dashboard (Summary)
+            const stats = analyzePerformance(videos);
+            const dashboardData = [
+                ['Report Configuration', 'Value'],
+                ['Channel Name', channelName],
+                ['Year', year],
+                ['Generated Date', new Date().toLocaleString('th-TH')],
+                [],
+                ['Performance Metrics', 'Value'],
+                ['Total Videos', stats.totalVideos],
+                ['Avg Videos/Month', stats.avgPerMonth],
+                ['Total Views (This Year Content)', videos.reduce((sum, v) => sum + parseInt(v.statistics.viewCount || 0), 0)],
+                ['Total Likes', videos.reduce((sum, v) => sum + parseInt(v.statistics.likeCount || 0), 0)],
+                ['Most Active Month', `${stats.mostActiveMonth} (${stats.mostActiveCount} videos)`],
+                ['Avg Days Between Uploads', stats.avgGap + ' days']
+            ];
+            const wsDashboard = XLSX.utils.aoa_to_sheet(dashboardData);
+            XLSX.utils.book_append_sheet(wb, wsDashboard, "Dashboard");
+
+            // 2. Sheet: Monthly Breakdown
+            const monthlyData = processMonthlyData(videos);
+            const monthlySheetData = monthlyData.map((m) => {
+               const totalViews = m.videos ? m.videos.reduce((sum, v) => sum + parseInt(v.statistics.viewCount || 0), 0) : 0;
+               return {
+                'Month': m.month,
+                'Videos Published': m.count,
+                'Percentage of Year': m.percentage + '%',
+                'Total Views': totalViews,
+                'Avg Views/Video': m.count > 0 ? Math.round(totalViews / m.count) : 0
+               };
+            });
+
+            // Calculate Totals
+            const totalVideosPublished = monthlySheetData.reduce((sum, row) => sum + row['Videos Published'], 0);
+            const totalViewsAll = monthlySheetData.reduce((sum, row) => sum + row['Total Views'], 0);
+            const avgViewsOverall = totalVideosPublished > 0 ? Math.round(totalViewsAll / totalVideosPublished) : 0;
+
+            // Add Total Row
+            monthlySheetData.push({
+                'Month': 'TOTAL',
+                'Videos Published': totalVideosPublished,
+                'Percentage of Year': '100%',
+                'Total Views': totalViewsAll,
+                'Avg Views/Video': avgViewsOverall
+            });
+
+            const wsMonthly = XLSX.utils.json_to_sheet(monthlySheetData);
+            XLSX.utils.book_append_sheet(wb, wsMonthly, "Monthly Stats");
+
+            // 3. Sheet: Video List (Detailed)
+            const videoListData = videos.map((v, index) => ({
+                'No.': index + 1,
+                'Publish Date': new Date(v.snippet.publishedAt).toLocaleDateString('th-TH'),
+                'Title': v.snippet.title,
+                'Views': parseInt(v.statistics.viewCount || 0),
+                'Likes': parseInt(v.statistics.likeCount || 0),
+                'Comments': parseInt(v.statistics.commentCount || 0),
+                'Duration': formatDuration(v.contentDetails ? v.contentDetails.duration : ''),
+                'Link': `https://www.youtube.com/watch?v=${v.id}`
+            }));
+            const wsVideos = XLSX.utils.json_to_sheet(videoListData);
+            XLSX.utils.book_append_sheet(wb, wsVideos, "All Videos");
+
+            // Auto-width for columns in Video List
+            const wscols = [
+                {wch: 5}, {wch: 15}, {wch: 50}, {wch: 10}, {wch: 10}, {wch: 10}, {wch: 10}, {wch: 40}
+            ];
+            wsVideos['!cols'] = wscols;
+
+            // Save File
+            XLSX.writeFile(wb, `${channelName}_Report_${year}_${new Date().toISOString().split('T')[0]}.xlsx`);
+            showStatus('ดาวน์โหลดรายงาน Excel สำเร็จ!', 'success');
+        }
+
+        // Tab Switching Logic
+        function switchTab(tabName) {
+            // Reset active states
+            [configTab, dashboardTab, reportTab].forEach(tab => {
+                if(tab) {
+                    tab.classList.remove('bg-white', 'text-indigo-600', 'shadow-sm');
+                    tab.classList.add('text-gray-500', 'hover:text-gray-700', 'hover:bg-white/50');
+                }
+            });
+            
+            // Hide all sections
+            configSection.classList.add('hidden');
+            dashboardSection.classList.add('hidden');
+            reportSection.classList.add('hidden');
+
+            if (tabName === 'config') {
+                configTab.classList.add('bg-white', 'text-indigo-600', 'shadow-sm');
+                configTab.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:bg-white/50');
+                configSection.classList.remove('hidden');
+                pageSubtitle.textContent = 'จัดการการตั้งค่า YouTube API';
+            } else if (tabName === 'dashboard') {
+                dashboardTab.classList.add('bg-white', 'text-indigo-600', 'shadow-sm');
+                dashboardTab.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:bg-white/50');
+                dashboardSection.classList.remove('hidden');
+                pageSubtitle.textContent = 'แดชบอร์ดแสดงผลข้อมูล';
+            } else if (tabName === 'report') {
+                reportTab.classList.add('bg-white', 'text-indigo-600', 'shadow-sm');
+                reportTab.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:bg-white/50');
+                reportSection.classList.remove('hidden');
+                pageSubtitle.textContent = 'สร้างรายงานสรุปผล';
+            }
+        }
+
+        if(configTab) configTab.addEventListener('click', () => switchTab('config'));
+        if(dashboardTab) dashboardTab.addEventListener('click', () => switchTab('dashboard'));
+        if(reportTab) reportTab.addEventListener('click', () => switchTab('report'));
 
         // Check if user is logged in
         function checkLogin() {
@@ -413,8 +791,8 @@
 
         // Tab switching
         configTab.addEventListener('click', () => {
-            configTab.className = 'px-6 py-2 bg-blue-600 text-white rounded-lg font-medium';
-            dashboardTab.className = 'px-6 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300';
+            configTab.className = 'px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 shadow-sm bg-white text-indigo-600';
+            dashboardTab.className = 'px-6 py-2.5 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-700 hover:bg-white/50 transition-all duration-300';
             configSection.classList.remove('hidden');
             dashboardSection.classList.add('hidden');
             pageTitle.textContent = 'YouTube API Config Manager';
@@ -422,8 +800,8 @@
         });
 
         dashboardTab.addEventListener('click', () => {
-            dashboardTab.className = 'px-6 py-2 bg-blue-600 text-white rounded-lg font-medium';
-            configTab.className = 'px-6 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300';
+            dashboardTab.className = 'px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 shadow-sm bg-white text-indigo-600';
+            configTab.className = 'px-6 py-2.5 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-700 hover:bg-white/50 transition-all duration-300';
             dashboardSection.classList.remove('hidden');
             configSection.classList.add('hidden');
             pageTitle.textContent = 'แดชบอร์ด YouTube';
@@ -432,8 +810,19 @@
         });
 
         function showStatus(message, type = 'success') {
-            statusMessage.className = `mb-4 p-4 rounded-lg ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
-            statusMessage.textContent = message;
+            statusMessage.className = `mb-6 p-4 rounded-xl flex items-center justify-center space-x-2 animate-fade-in ${
+                type === 'success' 
+                ? 'bg-green-100/80 text-green-700 border border-green-200' 
+                : 'bg-red-100/80 text-red-700 border border-red-200'
+            }`;
+            statusMessage.innerHTML = `
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    ${type === 'success' 
+                        ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />' 
+                        : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />'}
+                </svg>
+                <span class="font-medium">${message}</span>
+            `;
             statusMessage.classList.remove('hidden');
             setTimeout(() => {
                 statusMessage.classList.add('hidden');
@@ -460,25 +849,70 @@
         async function fetchChannelVideosForYear(apiKey, channelId, year) {
             const startDate = new Date(year, 0, 1).toISOString();
             const endDate = new Date(year + 1, 0, 1).toISOString();
-            let allVideos = [];
+            let searchResults = [];
             let nextPageToken = '';
             
-            do {
-                const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&type=video&order=date&publishedAfter=${startDate}&publishedBefore=${endDate}&maxResults=50&key=${apiKey}${nextPageToken ? '&pageToken=' + nextPageToken : ''}`;
-                const response = await fetch(url);
-                const data = await response.json();
-                if (data.error) throw new Error(data.error.message);
-                allVideos = allVideos.concat(data.items || []);
-                nextPageToken = data.nextPageToken || '';
-            } while (nextPageToken);
-            
-            return allVideos;
+            // Step 1: Search for videos in the timeframe
+            try {
+                do {
+                    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&type=video&order=date&publishedAfter=${startDate}&publishedBefore=${endDate}&maxResults=50&key=${apiKey}${nextPageToken ? '&pageToken=' + nextPageToken : ''}`;
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    if (data.error) throw new Error(data.error.message);
+                    searchResults = searchResults.concat(data.items || []);
+                    nextPageToken = data.nextPageToken || '';
+                } while (nextPageToken);
+
+                if (searchResults.length === 0) return [];
+
+                // Step 2: Fetch detailed statistics for each video
+                const videoIds = searchResults.map(item => item.id.videoId);
+                let detailedVideos = [];
+                
+                // Process in chunks of 50 (API limit)
+                for (let i = 0; i < videoIds.length; i += 50) {
+                    const chunk = videoIds.slice(i, i + 50);
+                    const idsString = chunk.join(',');
+                    const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=${idsString}&key=${apiKey}`;
+                    const statsResponse = await fetch(statsUrl);
+                    const statsData = await statsResponse.json();
+                    if (statsData.error) throw new Error(statsData.error.message);
+                    detailedVideos = detailedVideos.concat(statsData.items || []);
+                }
+
+                // Normalizing ID structure: 'videos' endpoint returns id as string, 'search' returns object. 
+                // We want to be consistent, but the UI code might expect specific fields. 
+                // The 'videos' endpoint results have 'id' as a string.
+                // We will attach the 'id' object structure used by search to make it compatible with existing code if needed,
+                // OR better, update the usage to handle the explicit ID.
+                // Let's rely on detailedVideos which has 'id' (string) and 'snippet' and 'statistics'.
+                
+                return detailedVideos;
+
+            } catch (error) {
+                console.error("Error fetching video details:", error);
+                throw error;
+            }
         }
 
         function formatNumber(num) {
             if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
             if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
             return num.toString();
+        }
+
+        function formatDuration(duration) {
+            const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+            const hours = (match[1] || '').replace('H', '');
+            const minutes = (match[2] || '').replace('M', '');
+            const seconds = (match[3] || '').replace('S', '');
+            
+            let parts = [];
+            if (hours) parts.push(hours);
+            parts.push(minutes ? (minutes.length === 1 && hours ? '0' + minutes : minutes) : '0');
+            parts.push(seconds ? (seconds.length === 1 ? '0' + seconds : seconds) : '00');
+            
+            return parts.join(':');
         }
 
         function generateYearOptions(channelCreatedDate) {
@@ -556,7 +990,8 @@
         }
 
         function getTopVideos(videos) {
-            return videos.sort((a, b) => new Date(b.snippet.publishedAt) - new Date(a.snippet.publishedAt)).slice(0, 5);
+            // Sort by VIEW COUNT (descending)
+            return videos.sort((a, b) => parseInt(b.statistics.viewCount) - parseInt(a.statistics.viewCount)).slice(0, 5);
         }
 
         function processMonthlyData(videos) {
@@ -584,100 +1019,122 @@
             const topVideosList = getTopVideos(videos);
 
             performanceOverview.innerHTML = `
-                <div class="bg-blue-50 p-4 rounded-lg text-center">
-                    <h4 class="font-semibold text-blue-800 mb-1">รวมทั้งปี</h4>
-                    <p class="text-2xl font-bold text-blue-600">${performance.totalVideos}</p>
-                    <p class="text-sm text-blue-500">วิดีโอ</p>
+                <div class="glass-card p-5 rounded-2xl text-center border-b-4 border-blue-500">
+                    <h4 class="font-semibold text-gray-600 mb-1 text-sm uppercase tracking-wide">รวมทั้งปี</h4>
+                    <p class="text-3xl font-bold text-gray-800 my-2">${performance.totalVideos}</p>
+                    <p class="text-xs text-blue-500 font-medium bg-blue-50 py-1 px-2 rounded-lg inline-block">วิดีโอ</p>
                 </div>
-                <div class="bg-green-50 p-4 rounded-lg text-center">
-                    <h4 class="font-semibold text-green-800 mb-1">เฉลี่ยต่อเดือน</h4>
-                    <p class="text-2xl font-bold text-green-600">${performance.avgPerMonth}</p>
-                    <p class="text-sm text-green-500">วิดีโอ/เดือน</p>
+                <div class="glass-card p-5 rounded-2xl text-center border-b-4 border-green-500">
+                    <h4 class="font-semibold text-gray-600 mb-1 text-sm uppercase tracking-wide">เฉลี่ยต่อเดือน</h4>
+                    <p class="text-3xl font-bold text-gray-800 my-2">${performance.avgPerMonth}</p>
+                    <p class="text-xs text-green-500 font-medium bg-green-50 py-1 px-2 rounded-lg inline-block">วิดีโอ/เดือน</p>
                 </div>
-                <div class="bg-purple-50 p-4 rounded-lg text-center">
-                    <h4 class="font-semibold text-purple-800 mb-1">ช่วงห่างเฉลี่ย</h4>
-                    <p class="text-2xl font-bold text-purple-600">${performance.avgGap}</p>
-                    <p class="text-sm text-purple-500">วัน</p>
+                <div class="glass-card p-5 rounded-2xl text-center border-b-4 border-purple-500">
+                    <h4 class="font-semibold text-gray-600 mb-1 text-sm uppercase tracking-wide">ช่วงห่างเฉลี่ย</h4>
+                    <p class="text-3xl font-bold text-gray-800 my-2">${performance.avgGap}</p>
+                    <p class="text-xs text-purple-500 font-medium bg-purple-50 py-1 px-2 rounded-lg inline-block">วัน/คลิป</p>
                 </div>
-                <div class="bg-orange-50 p-4 rounded-lg text-center">
-                    <h4 class="font-semibold text-orange-800 mb-1">เดือนที่ขยันที่สุด</h4>
-                    <p class="text-lg font-bold text-orange-600">${performance.mostActiveMonth}</p>
-                    <p class="text-sm text-orange-500">${performance.mostActiveCount} วิดีโอ</p>
+                <div class="glass-card p-5 rounded-2xl text-center border-b-4 border-orange-500">
+                    <h4 class="font-semibold text-gray-600 mb-1 text-sm uppercase tracking-wide">เดือนที่ขยันที่สุด</h4>
+                    <p class="text-xl font-bold text-gray-800 my-2 truncate">${performance.mostActiveMonth}</p>
+                    <p class="text-xs text-orange-500 font-medium bg-orange-50 py-1 px-2 rounded-lg inline-block">${performance.mostActiveCount} วิดีโอ</p>
                 </div>
             `;
 
             weekdayChart.innerHTML = weekdayPattern.map(data => `
-                <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
-                    <span class="text-sm font-medium text-gray-700">${data.day}</span>
-                    <div class="flex items-center space-x-2">
-                        <div class="w-20 bg-gray-200 rounded-full h-2">
-                            <div class="bg-blue-600 h-2 rounded-full" style="width: ${data.percentage}%"></div>
+                <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors">
+                    <span class="text-sm font-medium text-gray-700 w-20">${data.day}</span>
+                    <div class="flex-1 mx-3">
+                        <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2.5 rounded-full" style="width: ${data.percentage}%"></div>
                         </div>
-                        <span class="text-sm text-gray-600 w-12">${data.count}</span>
                     </div>
+                    <span class="text-xs font-bold text-gray-600 w-8 text-right">${data.count}</span>
                 </div>
             `).join('');
 
             consistencyMetrics.innerHTML = `
-                <div class="bg-green-50 p-3 rounded-lg">
-                    <h4 class="font-medium text-green-800">ความสม่ำเสมอ</h4>
-                    <p class="text-sm text-green-600">อัปโหลดทุก ${performance.avgGap} วันโดยเฉลี่ย</p>
+                <div class="glass-card p-4 rounded-xl mb-3 flex items-center space-x-4 border-l-4 border-green-500">
+                    <div class="bg-green-100 p-2 rounded-full text-green-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800 text-sm">ความสม่ำเสมอ</h4>
+                        <p class="text-xs text-gray-500">อัปโหลดทุก ${performance.avgGap} วันโดยเฉลี่ย</p>
+                    </div>
                 </div>
-                <div class="bg-blue-50 p-3 rounded-lg">
-                    <h4 class="font-medium text-blue-800">วันที่ขยันที่สุด</h4>
-                    <p class="text-sm text-blue-600">${weekdayPattern.reduce((max, current) => current.count > max.count ? current : max).day}</p>
+                <div class="glass-card p-4 rounded-xl mb-3 flex items-center space-x-4 border-l-4 border-blue-500">
+                    <div class="bg-blue-100 p-2 rounded-full text-blue-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800 text-sm">วันที่ขยันที่สุด</h4>
+                        <p class="text-xs text-gray-500">${weekdayPattern.reduce((max, current) => current.count > max.count ? current : max).day}</p>
+                    </div>
                 </div>
-                <div class="bg-purple-50 p-3 rounded-lg">
-                    <h4 class="font-medium text-purple-800">ช่วงเวลาทอง</h4>
-                    <p class="text-sm text-purple-600">${performance.mostActiveMonth} (${performance.mostActiveCount} วิดีโอ)</p>
+                <div class="glass-card p-4 rounded-xl flex items-center space-x-4 border-l-4 border-purple-500">
+                    <div class="bg-purple-100 p-2 rounded-full text-purple-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800 text-sm">ช่วงเวลาทอง</h4>
+                        <p class="text-xs text-gray-500">${performance.mostActiveMonth} (${performance.mostActiveCount} วิดีโอ)</p>
+                    </div>
                 </div>
             `;
 
             topVideos.innerHTML = topVideosList.map((video, index) => `
-                <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-                    <div class="flex-shrink-0">
-                        <span class="inline-flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-full text-sm font-bold">${index + 1}</span>
-                    </div>
-                    <div class="flex-shrink-0">
-                        <img src="${video.snippet.thumbnails.default.url}" alt="${video.snippet.title}" class="w-16 h-12 object-cover rounded">
+                <a href="https://www.youtube.com/watch?v=${video.id}" target="_blank" class="flex items-start space-x-4 p-3 bg-white hover:bg-gray-50 rounded-xl transition-all hover:shadow-md border border-transparent hover:border-gray-100 group">
+                    <div class="flex-shrink-0 relative">
+                        <span class="absolute -top-2 -left-2 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full text-xs font-bold flex items-center justify-center shadow-sm z-10">${index + 1}</span>
+                        <img src="${video.snippet.thumbnails.default.url}" alt="${video.snippet.title}" class="w-24 h-16 object-cover rounded-lg shadow-sm group-hover:scale-105 transition-transform duration-200">
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h4 class="text-sm font-medium text-gray-800 line-clamp-2">${video.snippet.title}</h4>
-                        <p class="text-xs text-gray-500 mt-1">${new Date(video.snippet.publishedAt).toLocaleDateString('th-TH')}</p>
+                        <h4 class="text-sm font-semibold text-gray-800 line-clamp-2 leading-snug group-hover:text-indigo-600 transition-colors">${video.snippet.title}</h4>
+                        <div class="flex items-center space-x-3 mt-1.5">
+                            <span class="text-xs font-bold text-gray-700 bg-gray-100 px-2 py-0.5 rounded-md flex items-center">
+                                <svg class="w-3 h-3 mr-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                ${formatNumber(video.statistics.viewCount)}
+                            </span>
+                            <span class="text-xs text-gray-400 flex items-center">
+                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                ${new Date(video.snippet.publishedAt).toLocaleDateString('th-TH')}
+                            </span>
+                        </div>
                     </div>
-                    <div class="flex-shrink-0">
-                        <a href="https://www.youtube.com/watch?v=${video.id.videoId}" target="_blank" rel="noopener noreferrer" class="text-red-600 hover:text-red-700 text-sm font-medium">ดู</a>
-                    </div>
-                </div>
+                </a>
             `).join('');
 
-            popularKeywords.innerHTML = keywords.map(keyword => `
-                <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
-                    <span class="text-sm font-medium text-gray-700">${keyword.word}</span>
+            popularKeywords.innerHTML = keywords.map((keyword, idx) => `
+                <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-xs font-bold text-gray-400 w-5">#${idx + 1}</span>
+                        <span class="text-sm font-medium text-gray-700">${keyword.word}</span>
+                    </div>
                     <div class="flex items-center space-x-2">
-                        <div class="w-16 bg-gray-200 rounded-full h-2">
-                            <div class="bg-green-600 h-2 rounded-full" style="width: ${(keyword.count / keywords[0].count) * 100}%"></div>
+                        <div class="w-20 bg-gray-100 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-emerald-400 to-teal-500 h-2 rounded-full" style="width: ${(keyword.count / keywords[0].count) * 100}%"></div>
                         </div>
-                        <span class="text-sm text-gray-600 w-8">${keyword.count}</span>
+                        <span class="text-xs font-bold text-gray-600 w-6 text-right">${keyword.count}</span>
                     </div>
                 </div>
             `).join('');
 
             titleLengthAnalysis.innerHTML = `
-                <div class="bg-blue-50 p-3 rounded-lg mb-3">
-                    <h4 class="font-medium text-blue-800">ความยาวเฉลี่ย</h4>
-                    <p class="text-lg font-bold text-blue-600">${titleAnalysis.avgLength} ตัวอักษร</p>
-                    <p class="text-xs text-blue-500">สั้นสุด: ${titleAnalysis.minLength} | ยาวสุด: ${titleAnalysis.maxLength}</p>
+                <div class="glass-card p-4 rounded-xl mb-4 bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100">
+                    <h4 class="font-medium text-indigo-800 text-sm">ความยาวเฉลี่ย</h4>
+                    <p class="text-2xl font-bold text-indigo-600 my-1">${titleAnalysis.avgLength} <span class="text-sm font-normal text-indigo-400">ตัวอักษร</span></p>
+                    <p class="text-xs text-indigo-400">สั้นสุด: ${titleAnalysis.minLength} | ยาวสุด: ${titleAnalysis.maxLength}</p>
                 </div>
                 ${titleAnalysis.categories.map(cat => `
-                    <div class="flex items-center justify-between p-2 bg-gray-50 rounded mb-1">
-                        <span class="text-sm text-gray-700">${cat.range}</span>
-                        <div class="flex items-center space-x-2">
-                            <div class="w-12 bg-gray-200 rounded-full h-2">
-                                <div class="bg-purple-600 h-2 rounded-full" style="width: ${cat.percentage}%"></div>
+                    <div class="flex items-center justify-between p-2 mb-1">
+                        <span class="text-xs text-gray-600 w-24">${cat.range}</span>
+                        <div class="flex-1 mx-2">
+                            <div class="w-full bg-gray-100 rounded-full h-2">
+                                <div class="bg-purple-500 h-2 rounded-full" style="width: ${cat.percentage}%"></div>
                             </div>
-                            <span class="text-sm text-gray-600 w-8">${cat.count}</span>
                         </div>
+                        <span class="text-xs font-bold text-gray-600 w-10 text-right">${cat.percentage}%</span>
                     </div>
                 `).join('')}
             `;
@@ -688,26 +1145,44 @@
             
             if (monthData.videos.length === 0) {
                 monthlyVideosList.innerHTML = `
-                    <div class="text-center text-gray-500 py-8">
-                        <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        ไม่มีวิดีโอในเดือนนี้
+                    <div class="text-center text-gray-400 py-12 flex flex-col items-center">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <p>ไม่มีวิดีโอในเดือนนี้</p>
                     </div>
                 `;
             } else {
                 monthlyVideosList.innerHTML = monthData.videos.map(video => `
-                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition duration-200">
-                        <div class="flex space-x-4">
-                            <div class="flex-shrink-0">
-                                <img src="${video.snippet.thumbnails.medium.url}" alt="${video.snippet.title}" class="w-32 h-24 object-cover rounded-lg">
+                    <div class="glass-card p-4 rounded-2xl hover:bg-white transition-all duration-300 group">
+                        <div class="flex flex-col md:flex-row gap-5">
+                            <div class="flex-shrink-0 relative overflow-hidden rounded-xl">
+                                <img src="${video.snippet.thumbnails.medium.url}" alt="${video.snippet.title}" class="w-full md:w-48 h-32 object-cover transition-transform duration-500 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                                <div class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md font-medium backdrop-blur-sm">
+                                    ${video.contentDetails ? formatDuration(video.contentDetails.duration) : ''}
+                                </div>
                             </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">${video.snippet.title}</h3>
-                                <p class="text-gray-600 text-sm mb-3 line-clamp-3">${video.snippet.description}</p>
-                                <div class="flex justify-between items-center">
-                                    <p class="text-gray-500 text-xs">เผยแพร่: ${new Date(video.snippet.publishedAt).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                                    <a href="https://www.youtube.com/watch?v=${video.id.videoId}" target="_blank" rel="noopener noreferrer" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200">ดูใน YouTube</a>
+                            <div class="flex-1 min-w-0 flex flex-col justify-between">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800 mb-2 line-clamp-2 leading-snug group-hover:text-indigo-600 transition-colors">${video.snippet.title}</h3>
+                                    <p class="text-gray-500 text-sm line-clamp-2 mb-3">${video.snippet.description || 'ไม่มีคำอธิบาย'}</p>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-3 md:gap-6">
+                                    <span class="flex items-center text-sm font-medium text-gray-700">
+                                        <svg class="w-4 h-4 mr-1.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                        ${formatNumber(video.statistics.viewCount)}
+                                    </span>
+                                    <span class="flex items-center text-sm font-medium text-gray-700">
+                                        <svg class="w-4 h-4 mr-1.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                        ${formatNumber(video.statistics.likeCount || 0)}
+                                    </span>
+                                    <a href="https://www.youtube.com/watch?v=${video.id}" target="_blank" rel="noopener noreferrer" class="ml-auto inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-red-500/20 hover:shadow-lg hover:shadow-red-500/30 transform hover:-translate-y-0.5">
+                                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                                        Watch
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -726,15 +1201,91 @@
 
         window.showMonthlyVideos = showMonthlyVideos;
 
-        loadYearDataBtn.addEventListener('click', async () => {
-            const selectedYear = parseInt(yearSelector.value);
-            if (!selectedYear || !currentConfig) {
-                showStatus('กรุณาเลือกปี', 'error');
-                return;
-            }
 
-            loadYearDataBtn.textContent = 'กำลังโหลด...';
-            loadYearDataBtn.disabled = true;
+
+        // Auto-load on Channel Selection
+        channelSelector.addEventListener('change', async () => {
+             const selectedConfigId = channelSelector.value;
+            if (!selectedConfigId) return;
+
+            const config = allConfigs[selectedConfigId];
+            
+            // Show loading state directly on the selector or a global loader
+            channelSelector.disabled = true;
+            const originalText = channelSelector.options[channelSelector.selectedIndex].text;
+            channelSelector.options[channelSelector.selectedIndex].text = 'กำลังโหลดข้อมูล...';
+
+            try {
+                const channelData = await fetchChannelData(config.apiKey, config.channelId);
+                currentChannelData = channelData;
+                currentConfig = config;
+                
+                channelDetails.innerHTML = `
+                    <div class="glass-card p-6 rounded-2xl flex flex-col items-center text-center">
+                        <div class="relative mb-4">
+                            <div class="absolute inset-0 bg-gradient-to-r from-pink-500 to-violet-500 rounded-full blur opacity-50"></div>
+                            <img src="${channelData.snippet.thumbnails.medium.url}" alt="${channelData.snippet.title}" class="relative w-28 h-28 rounded-full border-4 border-white shadow-lg object-cover">
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-1">${channelData.snippet.title}</h3>
+                        <p class="text-gray-500 text-xs mb-3 font-medium bg-gray-100 px-3 py-1 rounded-full">สร้างเมื่อ: ${new Date(channelData.snippet.publishedAt).toLocaleDateString('th-TH')}</p>
+                        <p class="text-gray-600 text-sm line-clamp-3 mb-4">${channelData.snippet.description}</p>
+                        <a href="https://youtube.com/channel/${channelData.id}" target="_blank" class="text-indigo-600 hover:text-indigo-700 text-sm font-semibold flex items-center">
+                            ไปที่ช่อง <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </a>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl flex flex-col justify-center relative overflow-hidden group hover:bg-white/90">
+                        <div class="absolute right-0 top-0 w-24 h-24 bg-blue-100 rounded-bl-full opacity-50 transition-transform group-hover:scale-110"></div>
+                        <h4 class="font-semibold text-gray-500 mb-2 uppercase text-xs tracking-wider z-10">ผู้ติดตาม</h4>
+                        <p class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 z-10">${formatNumber(channelData.statistics.subscriberCount)}</p>
+                        <p class="text-sm text-gray-400 mt-2 z-10">Subscribers</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl flex flex-col justify-center relative overflow-hidden group hover:bg-white/90">
+                        <div class="absolute right-0 top-0 w-24 h-24 bg-green-100 rounded-bl-full opacity-50 transition-transform group-hover:scale-110"></div>
+                        <h4 class="font-semibold text-gray-500 mb-2 uppercase text-xs tracking-wider z-10">วิดีโอทั้งหมด</h4>
+                        <p class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 to-teal-500 z-10">${formatNumber(channelData.statistics.videoCount)}</p>
+                        <p class="text-sm text-gray-400 mt-2 z-10">Videos Uploaded</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl flex flex-col justify-center relative overflow-hidden group hover:bg-white/90">
+                        <div class="absolute right-0 top-0 w-24 h-24 bg-purple-100 rounded-bl-full opacity-50 transition-transform group-hover:scale-110"></div>
+                        <h4 class="font-semibold text-gray-500 mb-2 uppercase text-xs tracking-wider z-10">ยอดวิวรวม</h4>
+                        <p class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 z-10">${formatNumber(channelData.statistics.viewCount)}</p>
+                        <p class="text-sm text-gray-400 mt-2 z-10">Total Views</p>
+                    </div>
+                `;
+                
+                channelInfo.classList.remove('hidden');
+                channelInfo.classList.add('animate-fade-in');
+                generateYearOptions(channelData.snippet.publishedAt);
+                yearFilterSection.classList.remove('hidden');
+                yearFilterSection.classList.add('animate-slide-up');
+                
+                // Trigger auto-load for the latest year
+                setTimeout(() => {
+                    const event = new Event('change');
+                    yearSelector.dispatchEvent(event);
+                }, 100);
+
+                showStatus('โหลดข้อมูลช่องสำเร็จ!', 'success');
+            } catch (error) {
+                console.error('Error loading YouTube data:', error);
+                showStatus(`เกิดข้อผิดพลาด: ${error.message}`, 'error');
+                channelInfo.classList.add('hidden');
+                yearFilterSection.classList.add('hidden');
+                analyticsSection.classList.add('hidden');
+            } finally {
+                channelSelector.disabled = false;
+                channelSelector.options[channelSelector.selectedIndex].text = originalText;
+            }
+        });
+
+        // Auto-load on Year Selection
+        yearSelector.addEventListener('change', async () => {
+            const selectedYear = parseInt(yearSelector.value);
+            if (!selectedYear || !currentConfig) return;
+
+            yearSelector.disabled = true;
+            const originalText = yearSelector.options[yearSelector.selectedIndex].text;
+            yearSelector.options[yearSelector.selectedIndex].text = 'กำลังโหลดข้อมูลปี...';
 
             try {
                 const videos = await fetchChannelVideosForYear(currentConfig.apiKey, currentConfig.channelId, selectedYear);
@@ -744,19 +1295,26 @@
                 const monthlyData = processMonthlyData(videos);
                 
                 monthlyVideosTable.innerHTML = monthlyData.map((data, index) => `
-                    <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">
-                        <td class="px-4 py-3 text-sm text-gray-800">${data.month}</td>
-                        <td class="px-4 py-3 text-center text-sm font-medium text-gray-900">${data.count}</td>
-                        <td class="px-4 py-3 text-center text-sm text-gray-600">
+                    <tr class="transition-colors hover:bg-gray-50 border-b border-gray-100 last:border-0">
+                        <td class="px-4 py-4 text-sm text-gray-800 font-medium">${data.month}</td>
+                        <td class="px-4 py-4 text-center">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold ${data.count > 0 ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-500'}">
+                                ${data.count}
+                            </span>
+                        </td>
+                        <td class="px-4 py-4 text-center text-sm text-gray-600">
                             <div class="flex items-center justify-center space-x-2">
-                                <div class="w-16 bg-gray-200 rounded-full h-2">
-                                    <div class="bg-blue-600 h-2 rounded-full" style="width: ${data.percentage}%"></div>
+                                <div class="w-16 bg-gray-100 rounded-full h-1.5">
+                                    <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-1.5 rounded-full" style="width: ${data.percentage}%"></div>
                                 </div>
-                                <span>${data.percentage}%</span>
+                                <span class="text-xs w-8 text-right">${data.percentage}%</span>
                             </div>
                         </td>
-                        <td class="px-4 py-3 text-center">
-                            ${data.count > 0 ? `<button onclick="showMonthlyVideos(${JSON.stringify(data).replace(/"/g, '&quot;')})" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition duration-200">ดูคลิป</button>` : `<span class="text-gray-400 text-sm">ไม่มีคลิป</span>`}
+                        <td class="px-4 py-4 text-center">
+                            ${data.count > 0 
+                                ? `<button onclick="showMonthlyVideos(${JSON.stringify(data).replace(/"/g, '&quot;')})" class="text-white bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition-all hover:scale-105 active:scale-95">ดูคลิป</button>` 
+                                : `<span class="text-gray-300 text-xs">—</span>`
+                            }
                         </td>
                     </tr>
                 `).join('');
@@ -768,121 +1326,50 @@
                 
                 yearSummary.innerHTML = `
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="text-center">
-                            <h4 class="font-semibold text-blue-800 mb-1">รวมทั้งปี</h4>
-                            <p class="text-2xl font-bold text-blue-600">${totalVideos} วิดีโอ</p>
+                        <div class="glass-card p-4 rounded-xl text-center">
+                            <h4 class="font-semibold text-gray-500 text-xs uppercase mb-1">รวมทั้งปี</h4>
+                            <p class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-800">${totalVideos} วิดีโอ</p>
                         </div>
-                        <div class="text-center">
-                            <h4 class="font-semibold text-green-800 mb-1">เฉลี่ยต่อเดือน</h4>
-                            <p class="text-2xl font-bold text-green-600">${avgPerMonth} วิดีโอ</p>
+                        <div class="glass-card p-4 rounded-xl text-center">
+                            <h4 class="font-semibold text-gray-500 text-xs uppercase mb-1">เฉลี่ยต่อเดือน</h4>
+                            <p class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-green-800">${avgPerMonth}</p>
                         </div>
-                        <div class="text-center">
-                            <h4 class="font-semibold text-purple-800 mb-1">เดือนที่มากที่สุด</h4>
-                            <p class="text-lg font-bold text-purple-600">${maxMonth.month}</p>
-                            <p class="text-sm text-purple-500">${maxMonth.count} วิดีโอ</p>
+                        <div class="glass-card p-4 rounded-xl text-center border border-purple-100 bg-purple-50/30">
+                            <h4 class="font-semibold text-purple-600 text-xs uppercase mb-1">เดือนที่มากที่สุด</h4>
+                            <p class="text-lg font-bold text-gray-800">${maxMonth.month}</p>
+                            <p class="text-xs text-purple-500">${maxMonth.count} วิดีโอ</p>
                         </div>
-                        <div class="text-center">
-                            <h4 class="font-semibold text-orange-800 mb-1">เดือนที่น้อยที่สุด</h4>
-                            <p class="text-lg font-bold text-orange-600">${minMonth.month}</p>
-                            <p class="text-sm text-orange-500">${minMonth.count} วิดีโอ</p>
+                        <div class="glass-card p-4 rounded-xl text-center border border-orange-100 bg-orange-50/30">
+                            <h4 class="font-semibold text-orange-600 text-xs uppercase mb-1">เดือนที่น้อยที่สุด</h4>
+                            <p class="text-lg font-bold text-gray-800">${minMonth.month}</p>
+                            <p class="text-xs text-orange-500">${minMonth.count} วิดีโอ</p>
                         </div>
                     </div>
                 `;
                 
                 analyticsSection.classList.remove('hidden');
+                analyticsSection.classList.add('animate-fade-in');
                 showStatus(`โหลดข้อมูลปี ${selectedYear + 543} สำเร็จ!`, 'success');
             } catch (error) {
                 console.error('Error loading year data:', error);
                 showStatus(`เกิดข้อผิดพลาด: ${error.message}`, 'error');
                 analyticsSection.classList.add('hidden');
             } finally {
-                loadYearDataBtn.textContent = 'โหลดข้อมูลปี';
-                loadYearDataBtn.disabled = false;
-            }
-        });
-
-        loadChannelDataBtn.addEventListener('click', async () => {
-            const selectedConfigId = channelSelector.value;
-            if (!selectedConfigId) {
-                showStatus('กรุณาเลือกช่อง YouTube', 'error');
-                return;
-            }
-
-            const config = allConfigs[selectedConfigId];
-            loadChannelDataBtn.textContent = 'กำลังโหลด...';
-            loadChannelDataBtn.disabled = true;
-
-            try {
-                const channelData = await fetchChannelData(config.apiKey, config.channelId);
-                currentChannelData = channelData;
-                currentConfig = config;
-                
-                channelDetails.innerHTML = `
-                    <div class="text-center">
-                        <img src="${channelData.snippet.thumbnails.medium.url}" alt="${channelData.snippet.title}" class="w-24 h-24 rounded-full mx-auto mb-4">
-                        <h3 class="text-lg font-semibold text-gray-800">${channelData.snippet.title}</h3>
-                        <p class="text-gray-600 text-sm mt-2">${channelData.snippet.description.substring(0, 100)}...</p>
-                        <p class="text-gray-500 text-xs mt-2">สร้างเมื่อ: ${new Date(channelData.snippet.publishedAt).toLocaleDateString('th-TH')}</p>
-                    </div>
-                    <div class="bg-blue-50 p-4 rounded-lg">
-                        <h4 class="font-semibold text-blue-800 mb-2">ผู้ติดตาม</h4>
-                        <p class="text-2xl font-bold text-blue-600">${formatNumber(channelData.statistics.subscriberCount)}</p>
-                    </div>
-                    <div class="bg-green-50 p-4 rounded-lg">
-                        <h4 class="font-semibold text-green-800 mb-2">วิดีโอทั้งหมด</h4>
-                        <p class="text-2xl font-bold text-green-600">${formatNumber(channelData.statistics.videoCount)}</p>
-                    </div>
-                    <div class="bg-purple-50 p-4 rounded-lg">
-                        <h4 class="font-semibold text-purple-800 mb-2">ยอดวิว</h4>
-                        <p class="text-2xl font-bold text-purple-600">${formatNumber(channelData.statistics.viewCount)}</p>
-                    </div>
-                `;
-                
-                channelInfo.classList.remove('hidden');
-                generateYearOptions(channelData.snippet.publishedAt);
-                yearFilterSection.classList.remove('hidden');
-                showStatus('โหลดข้อมูลช่องสำเร็จ!', 'success');
-            } catch (error) {
-                console.error('Error loading YouTube data:', error);
-                showStatus(`เกิดข้อผิดพลาด: ${error.message}`, 'error');
-                channelInfo.classList.add('hidden');
-                yearFilterSection.classList.add('hidden');
-                analyticsSection.classList.add('hidden');
-            } finally {
-                loadChannelDataBtn.textContent = 'โหลดข้อมูล';
-                loadChannelDataBtn.disabled = false;
-            }
-        });
-
-        configForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const channelName = document.getElementById('channelName').value;
-            const apiKey = document.getElementById('apiKey').value;
-            const channelId = document.getElementById('channelId').value;
-
-            try {
-                const newConfig = {
-                    channelName, apiKey, channelId,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
-                };
-                await push(configsRef, newConfig);
-                configForm.reset();
-                showStatus('บันทึก Config สำเร็จ!', 'success');
-            } catch (error) {
-                console.error('Error adding config:', error);
-                showStatus('เกิดข้อผิดพลาดในการบันทึก Config', 'error');
+                yearSelector.disabled = false;
+                yearSelector.options[yearSelector.selectedIndex].text = originalText;
             }
         });
 
         function renderConfigs(configs) {
             if (!configs || Object.keys(configs).length === 0) {
                 configList.innerHTML = `
-                    <div class="text-center text-gray-500 py-8">
-                        <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        ยังไม่มี Config ที่บันทึกไว้
+                    <div class="text-center text-white py-12">
+                        <div class="bg-white/10 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
+                            <svg class="h-10 w-10 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <p class="text-lg font-medium text-white/80">ยังไม่มี Config ที่บันทึกไว้</p>
                     </div>
                 `;
                 return;
@@ -890,23 +1377,37 @@
 
             const configsArray = Object.entries(configs).map(([key, value]) => ({ id: key, ...value }));
             configList.innerHTML = configsArray.map(config => `
-                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition duration-200">
+                <div class="glass-card rounded-2xl p-6 hover:border-indigo-300/50 group">
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2">${config.channelName}</h3>
-                            <div class="space-y-1 text-sm text-gray-600">
-                                <p><span class="font-medium">API Key:</span> ${config.apiKey.substring(0, 20)}...</p>
-                                <p><span class="font-medium">Channel ID:</span> ${config.channelId}</p>
-                                <p><span class="font-medium">สร้างเมื่อ:</span> ${new Date(config.createdAt).toLocaleString('th-TH')}</p>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                                ${config.channelName}
+                            </h3>
+                            <div class="space-y-2 text-sm text-gray-600 bg-gray-50/50 p-3 rounded-xl border border-gray-100">
+                                <p class="flex items-center"><span class="w-24 font-semibold text-gray-500">API Key:</span> <code class="bg-gray-100 px-2 py-0.5 rounded text-indigo-600 font-mono text-xs">${config.apiKey.substring(0, 10)}...${config.apiKey.substring(config.apiKey.length - 4)}</code></p>
+                                <p class="flex items-center"><span class="w-24 font-semibold text-gray-500">Channel ID:</span> <code class="bg-gray-100 px-2 py-0.5 rounded text-pink-600 font-mono text-xs">${config.channelId}</code></p>
+                                <p class="flex items-center"><span class="w-24 font-semibold text-gray-500">สร้างเมื่อ:</span> ${new Date(config.createdAt).toLocaleString('th-TH')}</p>
                             </div>
                         </div>
-                        <div class="flex space-x-2 ml-4">
-                            <button onclick="editConfig('${config.id}', '${config.channelName}', '${config.apiKey}', '${config.channelId}')" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm transition duration-200">แก้ไข</button>
-                            <button onclick="deleteConfig('${config.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition duration-200">ลบ</button>
+                        <div class="flex space-x-2 ml-4 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200">
+                            <button onclick="editConfig('${config.id}', '${config.channelName}', '${config.apiKey}', '${config.channelId}')" class="bg-amber-100 hover:bg-amber-200 text-amber-700 p-2 rounded-lg transition duration-200 shadow-sm">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            </button>
+                            <button onclick="deleteConfig('${config.id}')" class="bg-red-100 hover:bg-red-200 text-red-700 p-2 rounded-lg transition duration-200 shadow-sm">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
                         </div>
-                    </div>
                 </div>
-            `).join('');
+            </div>
+        </div>
+    `).join('');
+
+            // Populate Channel Selectors (Both Dashboard and Report)
+            const optionsHTML = '<option value="">เลือกช่อง YouTube...</option>' + 
+                configsArray.map(config => `<option value="${config.id}">${config.channelName}</option>`).join('');
+            
+            if(channelSelector) channelSelector.innerHTML = optionsHTML;
+            if(reportChannelSelector) reportChannelSelector.innerHTML = optionsHTML;
         }
 
         window.deleteConfig = async (configId) => {
@@ -914,6 +1415,18 @@
                 try {
                     await remove(ref(database, `youtube-configs/${configId}`));
                     showStatus('ลบ Config สำเร็จ!', 'success');
+                    
+                    // Clear current selection if needed
+                    if (channelSelector.value === configId) {
+                        currentConfig = null;
+                        currentChannelData = null;
+                        currentYearVideos = [];
+                        currentSelectedYear = null;
+                        channelSelector.value = '';
+                        channelInfo.classList.add('hidden');
+                        yearFilterSection.classList.add('hidden');
+                        analyticsSection.classList.add('hidden');
+                    }
                 } catch (error) {
                     console.error('Error deleting config:', error);
                     showStatus('เกิดข้อผิดพลาดในการลบ Config', 'error');
@@ -927,15 +1440,20 @@
             document.getElementById('channelId').value = channelId;
             
             const submitButton = configForm.querySelector('button[type="submit"]');
-            submitButton.textContent = 'อัปเดต Config';
-            submitButton.className = 'w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200';
+            submitButton.innerHTML = `
+                <span class="flex items-center justify-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    <span>อัปเดต Config</span>
+                </span>
+            `;
+            submitButton.className = 'w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-emerald-500/30';
             
             if (!document.getElementById('cancelEdit')) {
                 const cancelButton = document.createElement('button');
                 cancelButton.type = 'button';
                 cancelButton.id = 'cancelEdit';
                 cancelButton.textContent = 'ยกเลิก';
-                cancelButton.className = 'w-full bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200 mt-2';
+                cancelButton.className = 'w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-4 rounded-xl transition duration-200 mt-3';
                 cancelButton.onclick = cancelEdit;
                 configForm.appendChild(cancelButton);
             }
@@ -962,8 +1480,8 @@
         window.cancelEdit = () => {
             configForm.reset();
             const submitButton = configForm.querySelector('button[type="submit"]');
-            submitButton.textContent = 'บันทึก Config';
-            submitButton.className = 'w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200';
+            submitButton.innerHTML = 'บันทึก Config';
+            submitButton.className = 'w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-indigo-500/30';
             
             const cancelButton = document.getElementById('cancelEdit');
             if (cancelButton) cancelButton.remove();
@@ -996,6 +1514,8 @@
             renderConfigs(configs);
         });
 
+        // Initialize form state
+        cancelEdit();
         checkLogin();
     </script>
 </body>
